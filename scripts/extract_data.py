@@ -20,17 +20,19 @@ import shutil
 DATA_DIR = os.path.join(os.path.dirname(__file__), "..", "data")
 
 VIDEOS = {
-    "punch": os.path.join(DATA_DIR, "punch_session.mp4"),
-    "kick":  os.path.join(DATA_DIR, "kick_session.mp4"),
-    "throw": os.path.join(DATA_DIR, "throw_session.mp4"),
-    "jump":  os.path.join(DATA_DIR, "jump_session.mp4"),
+    "punch":       os.path.join(DATA_DIR, "punch_session.mp4"),
+    "kick":        os.path.join(DATA_DIR, "kick_session.mp4"),
+    "jump":        os.path.join(DATA_DIR, "jump_session.mp4"),
+    "slash":       os.path.join(DATA_DIR, "slash_session.mp4"),
+    "heavy_slash": os.path.join(DATA_DIR, "heavy_slash_session.mp4"),
+    "dust":        os.path.join(DATA_DIR, "dust_session.mp4"),
 }
 
 OUTPUT_DIR = os.path.join(DATA_DIR, "dataset")
 TARGET_SIZE = (224, 224)
 VAL_SPLIT = 0.2
-MOTION_THRESHOLD = 25.0   # Minimum motion to count as "doing something"
-FRAME_INTERVAL = 5        # Check every 5th frame
+MOTION_THRESHOLD = 12.0   # Minimum motion to count as "doing something"
+FRAME_INTERVAL = 2        # Check every 2nd frame
 # =======================
 
 

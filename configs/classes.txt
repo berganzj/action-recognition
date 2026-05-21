@@ -1,4 +1,6 @@
 punch
 kick
-throw
 jump
+slash
+heavy_slash
+dust
