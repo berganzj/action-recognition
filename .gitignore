@@ -1,0 +1,28 @@
+# Data & models (too large for git)
+data/*.mp4
+data/*.mkv
+data/*.avi
+data/dataset/
+models/*.pkl
+models/*.pt
+models/*.onnx
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.ipynb_checkpoints/
+*.egg-info/
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# OS
+Thumbs.db
+.DS_Store
+
+# IDE
+.vscode/
+.idea/

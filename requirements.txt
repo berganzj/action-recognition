@@ -1,0 +1,9 @@
+torch
+torchvision
+torchaudio
+fastai
+fastbook
+opencv-python
+matplotlib
+jupyter
+tqdm

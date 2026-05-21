@@ -1,0 +1,6 @@
+punch
+kick
+jump
+slash
+heavy_slash
+dust
