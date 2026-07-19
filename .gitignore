@@ -3,6 +3,7 @@ data/*.mp4
 data/*.mkv
 data/*.avi
 data/dataset/
+data/dataset_poc/
 models/*.pkl
 models/*.pt
 models/*.onnx

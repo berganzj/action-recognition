@@ -2,13 +2,17 @@
 Extract motion frames from OBS recordings and organize into a labeled dataset.
 
 Usage:
-    1. Place your MP4 recordings in the data/ folder:
-       - data/punch_session.mp4
-       - data/kick_session.mp4
-       - data/throw_session.mp4
-       - data/jump_session.mp4
+    1. Record each move looping in Training Mode, save to the data/ folder:
+       - data/sepultura_session.mp4     (214S)
+       - data/trovao_session.mp4        (214K)
+       - data/sol_nascente_session.mp4  (623S)
+       - data/ventania_session.mp4      (632146H)
+       - data/neutral_session.mp4       (idle / walk / dash, no specials)
     2. Run: python scripts/extract_data.py
     3. Output: data/dataset/train/<action>/ and data/dataset/val/<action>/
+
+Missing videos are skipped, so for the POC you only need
+sepultura_session.mp4 and neutral_session.mp4.
 """
 
 import cv2
@@ -20,19 +24,24 @@ import shutil
 DATA_DIR = os.path.join(os.path.dirname(__file__), "..", "data")
 
 VIDEOS = {
-    "punch":       os.path.join(DATA_DIR, "punch_session.mp4"),
-    "kick":        os.path.join(DATA_DIR, "kick_session.mp4"),
-    "jump":        os.path.join(DATA_DIR, "jump_session.mp4"),
-    "slash":       os.path.join(DATA_DIR, "slash_session.mp4"),
-    "heavy_slash": os.path.join(DATA_DIR, "heavy_slash_session.mp4"),
-    "dust":        os.path.join(DATA_DIR, "dust_session.mp4"),
+    "sepultura":    os.path.join(DATA_DIR, "sepultura_session.mp4"),     # 214S
+    "trovao":       os.path.join(DATA_DIR, "trovao_session.mp4"),        # 214K
+    "sol_nascente": os.path.join(DATA_DIR, "sol_nascente_session.mp4"),  # 623S
+    "ventania":     os.path.join(DATA_DIR, "ventania_session.mp4"),      # 632146H
+    "neutral":      os.path.join(DATA_DIR, "neutral_session.mp4"),
 }
+
+# Classes where we keep frames WITHOUT the motion filter.
+# Neutral is mostly idle — the motion filter would throw away
+# exactly the frames we want.
+NO_MOTION_FILTER = {"neutral"}
 
 OUTPUT_DIR = os.path.join(DATA_DIR, "dataset")
 TARGET_SIZE = (224, 224)
 VAL_SPLIT = 0.2
-MOTION_THRESHOLD = 12.0   # Minimum motion to count as "doing something"
-FRAME_INTERVAL = 2        # Check every 2nd frame
+MOTION_THRESHOLD = 12.0       # Minimum motion to count as "doing something"
+FRAME_INTERVAL = 2            # Check every 2nd frame
+MAX_FRAMES_PER_CLASS = 600    # Keep classes balanced; None = no cap
 # =======================
 
 
@@ -73,7 +82,10 @@ def extract_and_organize():
             if count % FRAME_INTERVAL == 0:
                 frame_resized = cv2.resize(frame, TARGET_SIZE)
 
-                if prev_frame is not None:
+                if action in NO_MOTION_FILTER:
+                    # Keep every sampled frame — idle IS the class
+                    frames.append(frame_resized)
+                elif prev_frame is not None:
                     if has_motion(prev_frame, frame_resized, MOTION_THRESHOLD):
                         frames.append(frame_resized)
 
@@ -81,7 +93,11 @@ def extract_and_organize():
             count += 1
 
         cap.release()
-        print(f"  Extracted {len(frames)} motion frames (skipped idle)")
+
+        if MAX_FRAMES_PER_CLASS and len(frames) > MAX_FRAMES_PER_CLASS:
+            frames = random.sample(frames, MAX_FRAMES_PER_CLASS)
+
+        print(f"  Extracted {len(frames)} frames")
 
         if len(frames) == 0:
             print(f"  WARNING: No motion frames found. Try lowering MOTION_THRESHOLD.")
