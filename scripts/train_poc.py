@@ -67,6 +67,7 @@ def train():
         item_tfms=Resize(224),
         batch_tfms=aug_transforms(),
         bs=32,
+        num_workers=0,
     )
     print(f"\nClasses: {dls.vocab}")
 
